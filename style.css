@@ -1,7 +1,6 @@
 :root{
   --navy:#0a1128;
   --gold:#c5a059;
-
   --paper:#fdfaf3;
   --shadow:rgba(0,0,0,0.45);
 
@@ -10,22 +9,25 @@
   --glass: rgba(10,17,40,0.55);
   --glass-strong: rgba(10,17,40,0.72);
   --line: rgba(197,160,89,0.18);
-  --line2: rgba(255,255,255,0.10);
 
   --radius: 18px;
 }
 
 *{ box-sizing:border-box; margin:0; padding:0; }
 
+html, body{ height:100%; }
+
 body{
   font-family:'Noto Sans KR', sans-serif;
   color:#eee;
   min-height:100vh;
-  background: #070b14;
+  background:#070b14;
   overflow-x:hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== 배경: b (7) ===== */
+/* ===== 배경 ===== */
 body::before{
   content:"";
   position:fixed;
@@ -41,8 +43,9 @@ body::after{
   content:"";
   position:fixed;
   inset:0;
-  background: radial-gradient(900px 500px at 15% 20%, rgba(106,13,173,0.10), rgba(0,0,0,0) 55%),
-              radial-gradient(900px 500px at 85% 25%, rgba(0,86,179,0.10), rgba(0,0,0,0) 55%);
+  background:
+    radial-gradient(900px 500px at 15% 20%, rgba(106,13,173,0.10), rgba(0,0,0,0) 55%),
+    radial-gradient(900px 500px at 85% 25%, rgba(0,86,179,0.10), rgba(0,0,0,0) 55%);
   z-index:-1;
 }
 
@@ -148,50 +151,37 @@ body::after{
   opacity:0.86;
   font-size:13px;
   line-height:1.45;
-  max-width: 700px;
+  max-width: 720px;
 }
 
-/* b (17) 오버레이 */
-.hero-banner{
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(90deg, rgba(0,0,0,0.55), rgba(0,0,0,0.20), rgba(0,0,0,0.55)),
-}
+
 .hero-glow{
   position:absolute;
   inset:-40px;
-  background: radial-gradient(600px 220px at 18% 20%, rgba(197,160,89,0.22), rgba(0,0,0,0) 55%),
-              radial-gradient(600px 220px at 82% 20%, rgba(0,86,179,0.18), rgba(0,0,0,0) 55%);
+  background:
+    radial-gradient(600px 220px at 18% 20%, rgba(197,160,89,0.22), rgba(0,0,0,0) 55%),
+    radial-gradient(600px 220px at 82% 20%, rgba(0,86,179,0.18), rgba(0,0,0,0) 55%);
   z-index:0;
 }
-
-/* ====== 증명서 나열 그리드 (반응형: 모바일 1열 / PC 2열) ====== */
+/* ====== 그리드: 모바일 1열 / PC 2열 ====== */
 .cert-grid{
   display:grid;
   gap:18px;
-  justify-content:center;
   align-items:start;
-
-  /* 기본(모바일 포함): 1열 */
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr; /* 기본 1열 */
 }
 
-/* 태블릿~작은 데스크탑: 여유 생기면 2열 */
 @media (min-width: 900px){
   .cert-grid{
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
-/* 너무 넓은 화면에서도 2열 유지 + 카드가 과하게 벌어지지 않게 */
 @media (min-width: 1400px){
   .cert-grid{
-    max-width: 1200px;   /* 2열 보기 좋은 폭 */
+    max-width: 1240px;
     margin: 0 auto;
   }
 }
-
 
 /* 카드 래퍼 */
 .cert-card{
@@ -205,23 +195,25 @@ body::after{
   box-shadow:0 18px 60px rgba(0,0,0,0.45);
   overflow:hidden;
   transition: transform .18s ease, background .18s ease;
+
+  /* 성능 */
+  content-visibility: auto;
+  contain: layout paint;
+  contain-intrinsic-size: 520px 760px;
 }
 .cert-card:hover{
   transform: translateY(-2px);
   background: var(--glass-strong);
 }
 
-/* 카드 성능 최적화(모바일 렉 줄이기) */
-.cert-card{
-  content-visibility: auto;
-  contain-intrinsic-size: 520px 760px; /* 대충의 카드 크기 힌트 */
-  contain: layout paint;
-}
+/* ✅ “calc 나눗셈” 금지: 브라우저에서 무효 처리되기 쉬움
+   → 브레이크포인트로 안전하게 스케일 고정 */
+.cert-card{ --scale: 0.58; }              /* 기본(모바일 중간) */
+@media (max-width: 420px){ .cert-card{ --scale: 0.45; } }  /* 작은 폰 */
+@media (min-width: 421px) and (max-width: 600px){ .cert-card{ --scale: 0.52; } }
+@media (min-width: 601px) and (max-width: 899px){ .cert-card{ --scale: 0.62; } }
+@media (min-width: 900px){ .cert-card{ --scale: 0.62; } } /* PC 2열 */
 
-/* 스케일 값(기본=모바일) */
-.cert-card{ --scale: 0.40; }
-
-/* 스케일을 “레이아웃 크기”로도 반영 */
 .cert-scaler{
   width: calc(800px * var(--scale));
   height: calc(1130px * var(--scale));
@@ -230,7 +222,6 @@ body::after{
   align-items:flex-start;
 }
 
-/* 실제 렌더링만 스케일 */
 .cert-render{
   width: 800px;
   height: 1130px;
@@ -239,17 +230,12 @@ body::after{
   will-change: transform;
 }
 
-/* PC에서 더 큼 */
-@media (min-width: 900px){
-  .cert-card{ --scale: 0.6; } /* 여기 숫자 올리면 더 커짐 */
+@media (max-width: 520px){
+  .stage{ padding-left:10px; padding-right:10px; }
+  .cert-card{ padding:10px; border-radius:14px; }
+  .brand-sub{ display:none; }
+  .hero-title{ font-size:22px; }
 }
-
-/* 작은 모바일은 살짝 줄이기(선택) */
-@media (min-width: 899px){
-  .cert-card{ --scale: 0.6; }
-}
-
-
 
 /* ===== 증명서 본체 ===== */
 .cert-area{
@@ -278,23 +264,34 @@ body::after{
   flex-direction:column;
 }
 
-/* 테마 */
+/* 테마(tag) */
 .theme-magic{ --theme-color:#6a0dad; }
 .theme-combat{ --theme-color:#8b0000; }
 .theme-science{ --theme-color:#0056b3; }
 .theme-medicine{ --theme-color:#1b4d3e; }
 
-.cert-border-outer{ border:5px double var(--theme-color); height:100%; padding:8px; }
-.cert-border-inner{
-  border:1px solid var(--theme-color);
+/* 역할(role) 프레임 */
+.role-student { --frame-color: var(--theme-color); }
+.role-professor { --frame-color: #d4af37; }
+
+.cert-border-outer{
+  border:5px double var(--frame-color);
   height:100%;
-  padding:30px 50px;
-  display:flex;
-  flex-direction:column;
-  position:relative;
+  padding:8px;
 }
 
-.cert-header{ text-align:center; margin-bottom:15px; }
+.cert-border-inner{
+  position:relative;
+  height:100%;
+  border-radius:18px;
+  border:1px solid rgba(197,160,89,0.55);
+  padding:26px 36px 30px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.cert-header{ text-align:center; margin-bottom:12px; }
 .cert-logo-text{
   font-family:'Cinzel', serif;
   font-weight:900;
@@ -317,27 +314,29 @@ body::after{
   opacity:0.9;
 }
 
-.cert-body{
+/* ✅ FRONT 겹침 방지: 무조건 GRID 2열 */
+.cert-front .cert-body{
   flex:1;
-  display:flex;
-  flex-direction:column;
+  min-height:0;
+  overflow:hidden;
+
+  display:grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap:24px;
   align-items:center;
-  justify-content:center;
-  gap:15px;
 }
 
-.photo-area,
-.private-photo-area{
-  width:480px;
-  height:600px;
-  border:3px solid var(--theme-color);
-  box-shadow:0 10px 30px rgba(0,0,0,0.2);
+/* 사진 */
+.photo-area{
+  width:340px;
+  height:560px;
+  border-radius:12px;
   overflow:hidden;
+  border:2px solid rgba(197,160,89,0.6);
+  box-shadow:0 14px 30px rgba(0,0,0,0.30);
   background:#fff;
 }
-
-.photo-area img,
-.private-photo-area img{
+.photo-area img{
   width:100%;
   height:100%;
   object-fit:cover;
@@ -345,49 +344,80 @@ body::after{
   display:block;
 }
 
-.info-area{ width:100%; text-align:center; }
-.statement{ font-size:1rem; color:var(--navy); margin-bottom:15px; line-height:1.4; }
-.info-row{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:8px;
-  font-size:1.2rem;
-}
-.label{
-  color:var(--theme-color);
-  font-family:'Cinzel', serif;
-  font-weight:bold;
-  width:80px;
+/* 정보 */
+.info-area{
+  min-width:0;
+  overflow:hidden;
   text-align:left;
 }
-.value{
+
+.statement{
+  font-size:0.95rem;
+  line-height:1.38;
+  margin-bottom:14px;
   color:var(--navy);
-  font-weight:700;
-  border-bottom:1px solid rgba(0,0,0,0.15);
-  min-width:220px;
+
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+}
+
+.info-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid rgba(0,0,0,0.12);
+  font-size:1.02rem;
+}
+
+.label{
+  width:86px;
+  font-family:'Cinzel', serif;
+  font-weight:800;
+  letter-spacing:1px;
+  color:var(--theme-color);
+  flex:0 0 auto;
+  text-align:left;
+}
+
+.value{
+  flex:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:var(--navy);
+  font-weight:800;
   text-align:left;
   padding-left:10px;
 }
-
 .cert-footer{
   margin-top:auto;
-  padding-top:15px;
+  padding-top:14px;
   border-top:1px solid rgba(0,0,0,0.10);
   text-align:center;
 }
-.issue-date{ font-size:0.9rem; color:#666; margin-bottom:15px; }
-.seal-area{ position:relative; display:inline-flex; align-items:center; }
+.issue-date{ font-size:0.9rem; color:#666; margin-bottom:14px; }
+
+.seal-area{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
+
 .signer{
   font-family:'Cinzel', serif;
-  font-size:1.4rem;
-  font-weight:bold;
+  font-size:1.35rem;
+  font-weight:900;
   color:var(--navy);
 }
+
 .wax-seal{
-  width:60px;
+  width:56px;
   height:auto;
-  margin-left:-18px;
+  margin-left:-16px;
   opacity:0.92;
   transform:rotate(-5deg);
 }
@@ -397,26 +427,55 @@ body::after{
   display:block;
 }
 
-/* 뒤면 박스 */
+/* ===== 뒤면 ===== */
 .cert-back .cert-body{
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:20px;
-  padding:10px 0;
+  gap:18px;
+  padding:8px 0;
+}
+
+.private-photo-area{
+  width:340px;
+  height:560px;
+  border-radius:12px;
+  overflow:hidden;
+  border:2px solid rgba(197,160,89,0.6);
+  box-shadow:0 14px 30px rgba(0,0,0,0.30);
+  background:#fff;
+}
+.private-photo-area img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:50% 25%;
+  display:block;
 }
 
 .profile-data-box{
   width:480px;
+  max-width:100%;
   background:rgba(255,255,255,0.75);
   border:1px solid rgba(0,0,0,0.10);
-  padding:20px;
+  padding:18px;
   border-radius:10px;
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:14px;
+  overflow:hidden;
 }
-.data-field{ text-align:left; border-bottom:1px solid rgba(0,0,0,0.08); padding-bottom:6px; }
+
+.data-field{
+  text-align:left;
+  border-bottom:1px solid rgba(0,0,0,0.08);
+  padding-bottom:6px;
+  min-width:0;
+}
 .data-field.full-width{ grid-column:span 2; }
 
 .data-tag{
@@ -424,14 +483,17 @@ body::after{
   font-size:0.75rem;
   color:var(--theme-color);
   font-family:'Cinzel', serif;
-  font-weight:bold;
+  font-weight:900;
   margin-bottom:4px;
   letter-spacing:1px;
 }
 .data-text{
-  font-size:1.15rem;
-  font-weight:800;
+  font-size:1.05rem;
+  font-weight:900;
   color:#111;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 .stats-display .gauge-wrap{
@@ -445,6 +507,7 @@ body::after{
   font-size:0.75rem;
   width:38px;
   color:#333;
+  flex:0 0 auto;
 }
 .bar{
   flex:1;
@@ -473,32 +536,15 @@ body::after{
 }
 .footer-dot{ opacity:0.6; }
 
-@media (max-width: 520px){
-  .brand-sub{ display:none; }
-  .hero-title{ font-size:22px; }
-
-  .cert-card{
-    padding:12px;
-    border-radius:14px;
-  }
-  .cert-card .cert-scaler{
-    zoom: 0.38;   /* 살짝 더 줄여서 한 장이 화면에 안정적으로 */
-  }
-}
-
-/* 모바일: 카드가 화면을 꽉 차게 */
+/* 모바일: 1열 고정 + 좌우 여백 최소 */
 @media (max-width: 899px){
   .cert-grid{
     grid-template-columns: 1fr !important;
-    padding-left: 6px;
-    padding-right: 6px;
+    gap:14px;
   }
-
   .cert-card{
-    width: 100%;
-    max-width: 100%;
-    padding: 10px;
+    width:100%;
+    max-width:100%;
+    padding:10px;
   }
 }
-
-
