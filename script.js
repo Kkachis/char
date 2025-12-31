@@ -268,8 +268,13 @@ document.addEventListener("DOMContentLoaded", function () {
           e.currentTarget.classList.toggle("flipped");
         });
 
-        scaler.appendChild(cert);
-        card.appendChild(scaler);
+        var renderWrap = document.createElement("div");
+renderWrap.className = "cert-render";
+
+renderWrap.appendChild(cert);
+scaler.appendChild(renderWrap);
+card.appendChild(scaler);
+
         grid.appendChild(card);
       })(i);
     }
@@ -290,3 +295,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   render();
 });
+
+
