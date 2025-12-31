@@ -157,10 +157,6 @@ body::after{
   inset:0;
   background:
     linear-gradient(90deg, rgba(0,0,0,0.55), rgba(0,0,0,0.20), rgba(0,0,0,0.55)),
-    url("b (17).png") center/cover no-repeat;
-  opacity:0.35;
-  z-index:1;
-  transform: scale(1.03);
 }
 .hero-glow{
   position:absolute;
@@ -170,14 +166,32 @@ body::after{
   z-index:0;
 }
 
-/* ====== 증명서 나열 그리드 ====== */
+/* ====== 증명서 나열 그리드 (반응형: 모바일 1열 / PC 2열) ====== */
 .cert-grid{
   display:grid;
   gap:18px;
   justify-content:center;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   align-items:start;
+
+  /* 기본(모바일 포함): 1열 */
+  grid-template-columns: 1fr;
 }
+
+/* 태블릿~작은 데스크탑: 여유 생기면 2열 */
+@media (min-width: 900px){
+  .cert-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 너무 넓은 화면에서도 2열 유지 + 카드가 과하게 벌어지지 않게 */
+@media (min-width: 1400px){
+  .cert-grid{
+    max-width: 1200px;   /* 2열 보기 좋은 폭 */
+    margin: 0 auto;
+  }
+}
+
 
 /* 카드 래퍼 */
 .cert-card{
@@ -198,10 +212,11 @@ body::after{
 }
 
 .cert-card .cert-scaler{
-  zoom: 0.44;
+  zoom: 0.6;              /* ← 기존 0.44 → 크게 */
   transform:none !important;
   transform-origin: top center;
 }
+
 
 /* ===== 증명서 본체 ===== */
 .cert-area{
@@ -428,5 +443,13 @@ body::after{
 @media (max-width: 520px){
   .brand-sub{ display:none; }
   .hero-title{ font-size:22px; }
-  .cert-card .cert-scaler{ zoom: 0.40; }
+
+  .cert-card{
+    padding:12px;
+    border-radius:14px;
+  }
+  .cert-card .cert-scaler{
+    zoom: 0.38;   /* 살짝 더 줄여서 한 장이 화면에 안정적으로 */
+  }
 }
+

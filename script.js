@@ -92,6 +92,21 @@ document.addEventListener("DOMContentLoaded", function () {
       backPhoto: "wb (45).png"
     },
     {
+      name: "아스트라",
+      majorKey: "Science",
+      majorText: "과학학부 (Science)",
+      id: "AIP-676-0302",
+      issueDate: "제국력 676년 3월 1일",
+      signer: "총장 셀레스틴",
+      statement: "위 학생은 판게아 제국 아카데미의 일원임을 엄격히 증명함.",
+      age: "23세",
+      grade: "4학년",
+      personality: "분석적임, 논리적임, 침착함, 신중함",
+      log: 55, cre: 45, pss: 50,
+      frontPhoto: "dr (1).png",
+      backPhoto: "dr (45).png"
+    },
+    {
       name: "세실리아",
       majorKey: "Medicine",
       majorText: "의학학부 (Medicine)",
